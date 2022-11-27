@@ -1,0 +1,534 @@
+openapi: 3.0.1
+info:
+  title: at
+  description: "The GTFS Static API provides a REST interface over the currently active GTFS Static data published by Auckland Transport.\n\nDetails about GTFS Static can be found at https://gtfs.org/reference/static. The API is currently only implemented for a subset of GTFS entities. Only fields that are not null/empty in the source data are returned.\n\nThe implementation follows the JSON:API spec, described at https://jsonapi.org/. The API currently only implements a subset of this spec, mostly the returned resource objects and errors. Please refer to the individual operations for details about which functions are provided.\n"
+  version: v3
+servers:
+  - url: https://api.at.govt.nz/gtfs/v3
+  - url: https://apimanagerproxy.at.govt.nz/gtfs/v3
+  - url: https://enterpriseapimgr.at.govt.nz/gtfs/v3
+paths:
+  /routes:
+    get:
+      tags:
+        - Route
+      summary: Routes
+      description: List of all routes
+      operationId: get-routes
+      parameters:
+        - name: 'filter[route_type]'
+          in: query
+          description: 'Route type, valid values >=0. Refer to http://gtfs.org/reference/static#routestxt and https://developers.google.com/transit/gtfs/reference/extended-route-types'
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully get routes
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/MultipleEntityResponse'
+              example:
+                data:
+                  - type: routes
+                    id: 101-202
+                    attributes:
+                      route_id: 101-202
+                      agency_id: NZB
+                      route_short_name: '101'
+                      route_long_name: '101'
+                      route_type: 3
+        '400':
+          description: Invalid request
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                errors:
+                  - status: '400'
+                    title: Invalid Request
+                    detail: Filter is invalid. It should be positive integers or zero
+                    source:
+                      parameter: route_type
+        '500':
+          description: Internal server error
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                errors:
+                  - status: string
+                    code: string
+                    title: string
+                    detail: string
+                    source:
+                      parameter: string
+  '/routes/{id}':
+    get:
+      tags:
+        - Route
+      summary: Route by id
+      description: Route retrieved by it's id
+      operationId: get-routes-id
+      parameters:
+        - name: id
+          in: path
+          description: Route ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/SingleEntityResponse'
+              example:
+                data:
+                  type: routes
+                  id: 101-202
+                  attributes:
+                    route_id: 101-202
+                    agency_id: NZB
+                    route_short_name: '101'
+                    route_long_name: '101'
+                    route_type: 3
+        '404':
+          description: The specified resource was not found
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                errors:
+                  - title: Resouce Not Found
+                    status: '404'
+                    source:
+                      parameter: id
+                    code: not-found
+        '500':
+          description: Internal server error
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                errors:
+                  - status: string
+                    code: string
+                    title: string
+                    detail: string
+                    source:
+                      parameter: string
+  /stops:
+    get:
+      tags:
+        - Stop
+      summary: Stops
+      description: 'List of all stops for a specific date.  Defaults to the date of the request if the filter[date] parameter is not provided.'
+      operationId: get-stops
+      parameters:
+        - name: 'filter[date]'
+          in: query
+          description: Query date (YYYY-MM-DD)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully get stops
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/MultipleEntityResponse'
+              example:
+                data:
+                  - type: stops
+                    id: 100-56c57897
+                    attributes:
+                      stop_id: 100-56c57897
+                      stop_code: '100'
+                      stop_name: Papatoetoe Train Station
+                      stop_lat: -36.97766
+                      stop_lon: 174.84925
+                      location_type: 1
+                      wheelchair_boarding: 0
+        '400':
+          description: Invalid request
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                errors:
+                  - status: '400'
+                    title: Invalid Request
+                    detail: Filter is invalid. Cannot find the specified filter
+        '500':
+          description: Internal server error
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                errors:
+                  - status: string
+                    code: string
+                    title: string
+                    detail: string
+                    source:
+                      parameter: string
+  '/stops/{id}':
+    get:
+      tags:
+        - Stop
+      summary: Stop by id
+      description: Stop retrieved by it's id
+      operationId: get-stops-id
+      parameters:
+        - name: id
+          in: path
+          description: Stop ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/SingleEntityResponse'
+              example:
+                data:
+                  type: stops
+                  id: 100-56c57897
+                  attributes:
+                    stop_id: 100-56c57897
+                    stop_code: '100'
+                    stop_name: Papatoetoe Train Station
+                    stop_lat: -36.97766
+                    stop_lon: 174.84925
+                    location_type: 1
+                    wheelchair_boarding: 0
+        '404':
+          description: The specified resource was not found
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                errors:
+                  - title: Resouce Not Found
+                    status: '404'
+                    source:
+                      parameter: id
+                    code: not-found
+        '500':
+          description: Internal server error
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                errors:
+                  - status: string
+                    code: string
+                    title: string
+                    detail: string
+                    source:
+                      parameter: string
+  '/trips/{id}/stops':
+    get:
+      tags:
+        - Stop
+      summary: Stops by trip id
+      description: List of Stops associated with a trip
+      operationId: get-trips-id-stops
+      parameters:
+        - name: id
+          in: path
+          description: Trip ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/MultipleEntityResponse'
+              example:
+                data:
+                  type: stops
+                  id: 100-56c57897
+                  attributes:
+                    stop_id: 100-56c57897
+                    stop_code: '100'
+                    stop_name: Papatoetoe Train Station
+                    stop_lat: -36.97766
+                    stop_lon: 174.84925
+                    location_type: 1
+                    wheelchair_boarding: 0
+        '404':
+          description: The specified resource was not found
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                errors:
+                  - title: Resouce Not Found
+                    status: '404'
+                    source:
+                      parameter: id
+                    code: not-found
+        '500':
+          description: Internal server error
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                errors:
+                  - status: string
+                    code: string
+                    title: string
+                    detail: string
+                    source:
+                      parameter: string
+  '/trips/{id}':
+    get:
+      tags:
+        - Trip
+      summary: Trip by id
+      description: Retrieves trip by it's id
+      operationId: get-trips-id
+      parameters:
+        - name: id
+          in: path
+          description: Trip ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/SingleEntityResponse'
+              example:
+                data:
+                  type: trips
+                  id: 1254-10101-23700-2-ee3a0f53
+                  attributes:
+                    trip_id: 1254-10101-23700-2-ee3a0f53
+                    route_id: 101-202
+                    service_id: Weekday-1
+                    trip_headsign: Pt Chevalier To Auckland University Via Jervois Rd
+                    direction_id: 0
+                    block_id: b_238
+                    shape_id: 1254-10101-72540668
+                    wheelchair_accessible: 1
+                    bikes_allowed: 2
+        '404':
+          description: The specified resource was not found
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                errors:
+                  - title: Resouce Not Found
+                    status: '404'
+                    source:
+                      parameter: id
+                    code: not-found
+        '500':
+          description: Internal server error
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                errors:
+                  - status: string
+                    code: string
+                    title: string
+                    detail: string
+                    source:
+                      parameter: string
+components:
+  schemas:
+    SingleEntityResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ResponseData'
+    MultipleEntityResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResponseData'
+    ResponseData:
+      type: object
+      properties:
+        type:
+          type: string
+        id:
+          type: string
+        attributes:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/Route'
+            - $ref: '#/components/schemas/Stop'
+            - $ref: '#/components/schemas/Trip'
+    Route:
+      type: object
+      properties:
+        route_id:
+          type: string
+        agency_id:
+          type: string
+          nullable: true
+        route_short_name:
+          type: string
+          nullable: true
+        route_long_name:
+          type: string
+          nullable: true
+        route_desc:
+          type: string
+          nullable: true
+        route_type:
+          type: integer
+        route_url:
+          type: string
+          nullable: true
+        route_color:
+          type: string
+          nullable: true
+        route_text_color:
+          type: string
+          nullable: true
+        route_sort_order:
+          type: integer
+          nullable: true
+    Stop:
+      type: object
+      properties:
+        stop_id:
+          type: string
+        stop_code:
+          type: string
+          nullable: true
+        stop_name:
+          type: string
+          nullable: true
+        stop_desc:
+          type: string
+          nullable: true
+        stop_lat:
+          type: number
+          format: double
+          nullable: true
+        stop_lon:
+          type: number
+          format: double
+          nullable: true
+        zone_id:
+          type: string
+          nullable: true
+        stop_url:
+          type: string
+          nullable: true
+        location_type:
+          type: integer
+          nullable: true
+        parent_station:
+          type: string
+          nullable: true
+        stop_timezone:
+          type: string
+          nullable: true
+        wheelchair_boarding:
+          type: integer
+          nullable: true
+        platform_code:
+          type: string
+          nullable: true
+    Trip:
+      type: object
+      properties:
+        route_id:
+          type: string
+        service_id:
+          type: string
+        trip_id:
+          type: string
+        trip_headsign:
+          type: string
+          nullable: true
+        trip_short_name:
+          type: string
+          nullable: true
+        direction_id:
+          type: integer
+          nullable: true
+        block_id:
+          type: string
+          nullable: true
+        shape_id:
+          type: string
+          nullable: true
+        wheelchair_accessible:
+          type: integer
+          nullable: true
+        bikes_allowed:
+          type: integer
+          nullable: true
+    ErrorResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+    Error:
+      type: object
+      properties:
+        status:
+          type: string
+        code:
+          type: string
+        title:
+          type: string
+        detail:
+          type: string
+        source:
+          type: object
+          properties:
+            parameter:
+              type: string
+  securitySchemes:
+    apiKeyHeader:
+      type: apiKey
+      name: Ocp-Apim-Subscription-Key
+      in: header
+    apiKeyQuery:
+      type: apiKey
+      name: subscription-key
+      in: query
+security:
+  - apiKeyHeader: [ ]
+  - apiKeyQuery: [ ]
+tags:
+  - name: Route
+  - name: Stop
+  - name: Trip

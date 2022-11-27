@@ -1,15 +1,15 @@
 [tool.poetry]
-name = "general-transit-feed-v3-ap-is-client"
+name = "atclient-client"
 version = "v3"
-description = "A client library for accessing General Transit Feed V3 APIs"
+description = "A client library for accessing atclient"
 
 authors = []
 
 readme = "README.md"
 packages = [
-    {include = "general_transit_feed_v3_ap_is_client"},
+    {include = "atclient_client"},
 ]
-include = ["CHANGELOG.md", "general_transit_feed_v3_ap_is_client/py.typed"]
+include = ["CHANGELOG.md", "atclient_client/py.typed"]
 
 [tool.poetry.dependencies]
 python = "^3.7"

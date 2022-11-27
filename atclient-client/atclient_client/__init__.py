@@ -1,4 +1,4 @@
-""" A client library for accessing General Transit Feed V3 APIs """
+""" A client library for accessing atclient """
 from .client import AuthenticatedClient, Client
 
 __all__ = (
